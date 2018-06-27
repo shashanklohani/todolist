@@ -1,0 +1,61 @@
+.listItem{
+    font-family: 'Markazi Text', serif;
+    display: flex;
+    justify-content: baseline;
+    align-items: baseline;
+    font-size: 30px;
+}
+
+.listItem > input{
+    border: 2px solid black;
+    margin-right: 20px;
+}
+
+.Button{
+    margin: 10px 30px 10px 0;
+    font-family: 'Markazi Text', serif;
+    font-size: 15px;
+    border: 2px solid black;
+}
+
+.List{
+    font-size: 20px;
+    float: left;
+    min-width: 300px;
+    margin-right: 20px;
+}
+
+.editor{
+    display: none;
+    position: fixed;
+    margin: auto;
+    height: 10%;
+    width: 10%;
+
+    top: 45%;
+    bottom: 45%;
+    left: 45%;
+    right: 45%;
+}
+
+.editor > form{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Markazi Text', serif;
+    font-size: 15px;
+}
+
+.editor > form > input{
+    font-size: 20px;
+    border-radius: 8px;
+    height: 50px;
+}
+
+.editor > form > button{
+    color: white;
+    font-size: 20px;
+    border-radius: 8px;
+    background-color: blue;
+}
