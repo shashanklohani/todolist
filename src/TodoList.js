@@ -21,56 +21,75 @@ class TodoList extends Component {
     this.markAllComplete = this.markAllComplete.bind(this);
   }
 
-  componentDidMount(){  
+  componentDidMount() {
     var item = localStorage.getItem('item');
     var itemJson = JSON.parse(item);
     this.setDefaultState(itemJson);
   }
 
-  setDefaultState(json){
-    this.setState({items:json}, function(){
+  setDefaultState(json) {
+    this.setState({ items: json }, function () {
       console.log(json);
     });
   }
 
-  changeStatus(key){
+  changeStatus(key) {
     var itemsCopy = this.state.items;
+    var newItem = {};
     console.log("Change Status");
 
     itemsCopy.map(function (item) {
-      if(item.key === key){
-        if(item.status === "pending"){
+      if (item.key === key) {
+        if (item.status === "pending") {
           console.log("Change Status 1");
           item.status = "completed";
+          newItem = item;
         }
 
-        else if(item.status === "completed"){
+        else if (item.status === "completed") {
           item.status = "pending";
           console.log("Change Status 2");
+          newItem = item;
         }
       }
     });
 
     this.setState({
       items: itemsCopy
-    }, function(){
+    }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
+      var url = 'http://localhost:3005/api/items/' + key;
+      fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(newItem),
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
     });
   }
-  
+
   addItem(e) {
     if (this._inputElement.value !== "") {
       var newItem = {
         text: this._inputElement.value,
-        key: Date.now(), 
+        key: Date.now(),
         status: "pending"
       }
+
       this.setState((prevState) => {
         return {
           items: prevState.items.concat(newItem)
         };
-      }, function(){
+      }, function () {
         localStorage.setItem('item', JSON.stringify(this.state.items));
+        fetch('http://localhost:3005/api/items', {
+          method: 'POST',
+          body: JSON.stringify(newItem),
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
       });
     }
     this._inputElement.value = "";
@@ -84,30 +103,37 @@ class TodoList extends Component {
 
     this.setState({
       items: filteredItems
-    }, function(){
+    }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
-    });
+      var url = 'http://localhost:3005/api/items/' + key;
+      fetch(url, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
+    })
   }
 
-  rearrangeTasks(startId, dropId){
+  rearrangeTasks(startId, dropId) {
 
     var n = startId.length;
     var m = dropId.length;
 
-    var startN = startId[n-1];
-    var dropN = dropId[m-1];
+    var startN = startId[n - 1];
+    var dropN = dropId[m - 1];
 
     var item = this.state.items;
 
     var temp = item[startN];
     item[startN] = item[dropN];
     item[dropN] = temp;
-
-    this.setState({items:item});
+    
+    this.setState({ items: item });
   }
 
   editItem(text, key) {
-    this.setState({ key: key});
+    this.setState({ key: key });
     document.getElementsByClassName("header")[0].style.display = "none";
     var elem = document.getElementsByClassName("listItem");
     for (var i = 0; i < elem.length; i++) {
@@ -124,12 +150,14 @@ class TodoList extends Component {
     var key = this.state.key;
     var text = this._inputEditedText.value;
     var itemCopy = this.state.items;
-
+    var newItem = {};
+    
     if (text !== "") {
       itemCopy.map(function (item) {
         if (item.key === key) {
           console.log(itemCopy);
           item.text = text;
+          newItem = item;
           console.log(itemCopy);
         }
       });
@@ -137,8 +165,16 @@ class TodoList extends Component {
 
     this.setState({
       items: itemCopy
-    }, function(){
+    }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
+      var url = 'http://localhost:3005/api/items/' + key;
+      fetch(url, {
+          method: 'PUT',
+          body: JSON.stringify(newItem),
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
     });
 
     document.getElementsByClassName("header")[0].style.display = "flex";
@@ -151,28 +187,42 @@ class TodoList extends Component {
     document.getElementsByClassName("editor")[0].style.display = "none";
   }
 
-  deleteCompletedTask(){
+  deleteCompletedTask() {
     var deletedItems = this.state.items.filter(function (item) {
       return (item.status !== "completed");
     });
 
     this.setState({
       items: deletedItems
-    }, function(){
+    }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
+      var url = 'http://localhost:3005/api/items';
+      fetch(url, {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
     });
   }
 
-  markAllComplete(){
+  markAllComplete() {
     var itemCopy = this.state.items;
     itemCopy.map(function (item) {
       item.status = "completed";
     });
-    
+
     this.setState({
       items: itemCopy
-    }, function(){
+    }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
+      fetch('http://localhost:3005/api/items/complete/', {
+          method: 'POST',
+          body: JSON.stringify(itemCopy),
+          headers: { 'Content-Type': 'application/json' }
+        }).catch(err =>{
+          alert(err);
+        })
     });
   }
 
@@ -195,10 +245,10 @@ class TodoList extends Component {
             <button type="submit">add</button>
           </form>
         </div>
-        <TodoItems className="todoItem" changeStatus={this.changeStatus} rearrangeTasks={this.rearrangeTasks} editItem={this.editItem} entries={this.state.items} delete={this.deleteItem}/>
-        <button className="Button" id="buttonDeleteAll" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteCompletedTask()}}>Delete All completed</button>
+        <TodoItems className="todoItem" changeStatus={this.changeStatus} rearrangeTasks={this.rearrangeTasks} editItem={this.editItem} entries={this.state.items} delete={this.deleteItem} />
+        <button className="Button" id="buttonDeleteAll" onClick={() => { if (window.confirm('Are you sure you wish to delete this item?')) this.deleteCompletedTask() }}>Delete All completed</button>
         <button className="Button" id="buttonMarkAll" onClick={this.markAllComplete}>Mark All Complete</button>
-        </div>
+      </div>
     );
   }
 }

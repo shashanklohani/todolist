@@ -49,7 +49,7 @@ class TodoItems extends Component {
     this.props.rearrangeTasks(this.state.startId, dropId);
     console.log("on drop");
   }
-
+      
   changeStatus(key){
     console.log("change status");
     this.props.changeStatus(key);
@@ -78,4 +78,5 @@ class TodoItems extends Component {
     );
   }
 };
+
 export default TodoItems;
