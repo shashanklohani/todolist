@@ -23,8 +23,11 @@ class TodoList extends Component {
 
   componentDidMount() {
     var item = localStorage.getItem('item');
+
     var itemJson = JSON.parse(item);
+    if(itemJson !== null){
     this.setDefaultState(itemJson);
+  }
   }
 
   setDefaultState(json) {
@@ -53,19 +56,19 @@ class TodoList extends Component {
         }
       }
     });
-
+    
     this.setState({
       items: itemsCopy
     }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
       var url = 'http://localhost:3005/api/items/' + key;
-      fetch(url, {
-          method: 'PUT',
-          body: JSON.stringify(newItem),
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+      // fetch(url, {
+      //   method: 'PUT',
+      //   body: JSON.stringify(newItem),
+      //   headers: { 'Content-Type': 'application/json' }
+      // }).catch(err => {
+      //   alert(err);
+      // })
     });
   }
 
@@ -76,20 +79,19 @@ class TodoList extends Component {
         key: Date.now(),
         status: "pending"
       }
-
       this.setState((prevState) => {
         return {
           items: prevState.items.concat(newItem)
         };
       }, function () {
         localStorage.setItem('item', JSON.stringify(this.state.items));
-        fetch('http://localhost:3005/api/items', {
-          method: 'POST',
-          body: JSON.stringify(newItem),
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+        // fetch('http://localhost:3005/api/items', {
+        //   method: 'POST',
+        //   body: JSON.stringify(newItem),
+        //   headers: { 'Content-Type': 'application/json' }
+        // }).catch(err => {
+        //   alert(err);
+        // })
       });
     }
     this._inputElement.value = "";
@@ -106,12 +108,12 @@ class TodoList extends Component {
     }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
       var url = 'http://localhost:3005/api/items/' + key;
-      fetch(url, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+      // fetch(url, {
+      //   method: 'DELETE',
+      //   headers: { 'Content-Type': 'application/json' }
+      // }).catch(err => {
+      //   alert(err);
+      // })
     })
   }
 
@@ -126,10 +128,23 @@ class TodoList extends Component {
     var item = this.state.items;
 
     var temp = item[startN];
+    var temp2 = item[dropN];
+
     item[startN] = item[dropN];
     item[dropN] = temp;
-    
+
+    var body = [temp2, temp];
+    console.log("body");
+    console.log(body);
     this.setState({ items: item });
+
+    // fetch('http://localhost:3005', {
+    //   method: 'PUT',
+    //   body: JSON.stringify(body),
+    //   headers: { 'Content-Type': 'application/json' }
+    // }).catch(err => {
+    //   alert(err);
+    // })
   }
 
   editItem(text, key) {
@@ -162,19 +177,19 @@ class TodoList extends Component {
         }
       });
     }
-
+    
     this.setState({
       items: itemCopy
     }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
       var url = 'http://localhost:3005/api/items/' + key;
-      fetch(url, {
-          method: 'PUT',
-          body: JSON.stringify(newItem),
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+      // fetch(url, {
+      //   method: 'PUT',
+      //   body: JSON.stringify(newItem),
+      //   headers: { 'Content-Type': 'application/json' }
+      // }).catch(err => {
+      //   alert(err);
+      // })
     });
 
     document.getElementsByClassName("header")[0].style.display = "flex";
@@ -197,12 +212,12 @@ class TodoList extends Component {
     }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
       var url = 'http://localhost:3005/api/items';
-      fetch(url, {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+      // fetch(url, {
+      //   method: 'DELETE',
+      //   headers: { 'Content-Type': 'application/json' }
+      // }).catch(err => {
+      //   alert(err);
+      // })
     });
   }
 
@@ -216,13 +231,12 @@ class TodoList extends Component {
       items: itemCopy
     }, function () {
       localStorage.setItem('item', JSON.stringify(this.state.items));
-      fetch('http://localhost:3005/api/items/complete/', {
-          method: 'POST',
-          body: JSON.stringify(itemCopy),
-          headers: { 'Content-Type': 'application/json' }
-        }).catch(err =>{
-          alert(err);
-        })
+      // fetch('http://localhost:3005/api', {
+      //   method: 'PUT',
+      //   headers: { 'Content-Type': 'application/json' }
+      // }).catch(err => {
+      //   alert(err);
+      // })
     });
   }
 
