@@ -1,15 +1,15 @@
-Todolist Application
+# Todolist Application
 
 Link: https://todolist-24608.firebaseapp.com/
 
 A ToDo application build using React.js
 
-Features:-
+## Features:-
 
-Add task
+* Add task
 
-Update task
+* Update task
 
-Delete task
+* Delete task
 
-Rearrange task
+* Rearrange task
